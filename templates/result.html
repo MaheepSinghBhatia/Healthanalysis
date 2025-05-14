@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            font-family: "Times New Roman", Times, serif;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 60px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1, h2, h3 {
+            text-shadow: 0 0 10px #fff;
+            color: #fff;
+        }
+
+        .card {
+            border-radius: 20px;
+            padding: 25px;
+            transition: background 0.4s, box-shadow 0.4s;
+        }
+
+        /* ===== DARK THEME ===== */
+        body.dark {
+            background: #000;
+            color: #e0f7fa;
+        }
+
+        body.dark .text-start {
+            color: #e0f7fa;
+        }
+
+        body.dark .card {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.788);
+        }
+
+        /* ===== LIGHT THEME ===== */
+        body.light {
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        body.light .card {
+            background: #fff;
+            color:#000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+
+        body.light .category {
+            color: #222;
+        }
+
+        body.light .summary {
+            color: #222;
+        }
+
+        body.light .mb-4 {
+            color: #222;
+        }
+
+        /* ===== COLOR-BLIND FRIENDLY THEME ===== */
+        body.colorblind {
+            background: #000;
+            color: #FFD700;
+        }
+
+        body.colorblind .text-start {
+            color: #FFD700;
+        }
+
+        body.colorblind .card {
+            background: #000;
+            border: 2px solid #FFD700;
+        }
+
+        /* Theme switcher */
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-switch select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            background: #fff;
+            color: #000;
+        }
+
+        /* Back button */
+        .btn-back {
+            font-weight: 600;
+            border: none;
+            transition: 0.3s ease-in-out;
+            margin-top: 20px;
+        }
+
+        body.dark .btn-back {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: #fff;
+        }
+
+        body.light .btn-back {
+            background: #007bff;
+            color: #fff;
+        }
+
+        body.colorblind .btn-back {
+            background: #FFD700;
+            color: #000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="dark">
+    <!-- Theme Switcher -->
+    <div class="theme-switch">
+        <select id="themeSelector">
+            <option value="dark" selected>🌙 Dark</option>
+            <option value="light">☀️ Light</option>
+            <option value="colorblind">🧠 Color-Blind Mode</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <h1 class="mb-4">Prediction Result</h1>
+        <div class="card">
+            <h2 class="category">Category: {{ category }}</h2>
+            <h3 class="summary">Summary & Q&A</h3>
+            <div class="text-start" style="white-space: pre-wrap;">{{ result | safe }}</div>
+            <a href="/" class="btn btn-back w-100 mt-4">⬅️ Back to Home</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle theme switching
+        document.getElementById("themeSelector").addEventListener("change", function () {
+            document.body.className = this.value;
+        });
+    </script>
+</body>
+</html>
