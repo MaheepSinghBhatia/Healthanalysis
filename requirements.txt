@@ -1,8 +1,8 @@
-gunicorn
-Flask
+flask
+python-dotenv
+requests
 python-docx
 PyMuPDF
 nltk
-python-dotenv
+gunicorn
 numpy
-requests
