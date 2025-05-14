@@ -5,7 +5,6 @@ import fitz  # PyMuPDF
 import nltk
 from nltk.data import find
 from dotenv import load_dotenv
-from together import Together
 import textwrap
 import numpy as np
 import requests
