@@ -5,6 +5,7 @@ import fitz  # PyMuPDF
 import nltk
 from nltk.data import find
 from dotenv import load_dotenv
+from together import Together
 import textwrap
 import numpy as np
 import requests
@@ -35,7 +36,7 @@ def query(prompt, system_prompt="You are a helpful medical assistant.", retries=
         "X-Title": TITLE
     }
     payload = {
-        "model": "nousresearch/deephermes-3-mistral-24b-preview:free",
+        "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
@@ -47,7 +48,7 @@ def query(prompt, system_prompt="You are a helpful medical assistant.", retries=
 
     while attempt < retries:
         try:
-            response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, data=json.dumps(payload))
+            response = requests.post("https://api.together.xyz/v1/chat/completions", headers=headers, data=json.dumps(payload))
             response.raise_for_status()
             result = response.json()
 
