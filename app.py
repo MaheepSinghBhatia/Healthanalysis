@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
-from dotenv import load_dotenv
 from docx import Document
 import fitz  # PyMuPDF
 import nltk
@@ -12,8 +11,6 @@ import requests
 import json
 import time
 import re
-
-load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
