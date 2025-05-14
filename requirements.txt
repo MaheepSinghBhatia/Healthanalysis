@@ -1,3 +1,4 @@
+gunicorn
 Flask
 python-docx
 PyMuPDF
@@ -5,4 +6,3 @@ nltk
 python-dotenv
 numpy
 requests
-gunicorn app:app
