@@ -51,11 +51,11 @@ def query(prompt, system_prompt="You are a helpful medical assistant.", retries=
             response.raise_for_status()
             result = response.json()
 
-            # Handle if 'choices' is missing
-            if 'choices' in result and len(result['choices']) > 0:
-                return result['choices'][0]['message']['content'].strip()
-            else:
-                return f"❌ Error: Invalid API response: {result}"
+            if 'choices' not in result or not result['choices']:
+                return f"❌ Error: Invalid API response format: {result}"
+
+            return result['choices'][0]['message']['content'].strip()
+
         except requests.exceptions.RequestException as e:
             if isinstance(e, requests.exceptions.HTTPError) and response.status_code == 429:
                 time.sleep(wait_time)
@@ -149,27 +149,27 @@ def process_uploaded_file(file):
     links = get_references_and_links(text)
 
     result = f"📋 Summary:\n\n{summary}\n\n❓ Q&A:\n\n{qa}\n\n🌐 Resources:\n\n{links}"
-
     return result, category
 
-# Flask route for the home page
 @app.route('/')
 def home():
-    return render_template('index.html')  # Make sure index.html is in the templates folder
+    return render_template('index.html')
 
-# Flask route to handle file upload
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    file = request.files.get('file')  # Retrieve the file from the form
+    file = request.files.get('file')
     if not file:
-        return redirect(url_for('home'))  # If no file is uploaded, redirect back to home page
+        return redirect(url_for('home'))
 
-    result, category = process_uploaded_file(file)  # Process the uploaded file
-    if result:
-        return render_template('result.html', result=result, category=category)  # Display result page
-    else:
-        return render_template('error.html', error_message="Error: Unsupported file type or empty document."), 400  # Use an error page instead
+    try:
+        result, category = process_uploaded_file(file)
+        if result:
+            return render_template('result.html', result=result, category=category)
+        else:
+            return render_template('error.html', error_message="Error: Unsupported file type or empty document."), 400
+    except Exception as e:
+        print("⚠️ Internal Error:", e)
+        return render_template('error.html', error_message="Internal server error during processing."), 500
 
-# Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
