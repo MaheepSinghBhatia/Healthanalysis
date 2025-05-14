@@ -23,13 +23,13 @@ except LookupError:
 
 # Load environment variables from the key.env file
 load_dotenv("key.env")
-OPENROUTER_API_KEY = os.getenv("API_KEY")
+SECRET_API_KEY = os.getenv("API_KEY")
 REFERER = os.getenv("REFERER")
 TITLE = os.getenv("TITLE")
 
 def query(prompt, system_prompt="You are a helpful medical assistant.", retries=3, delay=3):
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {SECRET_API_KEY}",
         "Content-Type": "application/json",
         "HTTP-Referer": REFERER,
         "X-Title": TITLE
@@ -50,7 +50,12 @@ def query(prompt, system_prompt="You are a helpful medical assistant.", retries=
             response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, data=json.dumps(payload))
             response.raise_for_status()
             result = response.json()
-            return result['choices'][0]['message']['content'].strip()
+
+            # Handle if 'choices' is missing
+            if 'choices' in result and len(result['choices']) > 0:
+                return result['choices'][0]['message']['content'].strip()
+            else:
+                return f"❌ Error: Invalid API response: {result}"
         except requests.exceptions.RequestException as e:
             if isinstance(e, requests.exceptions.HTTPError) and response.status_code == 429:
                 time.sleep(wait_time)
@@ -163,7 +168,7 @@ def upload_file():
     if result:
         return render_template('result.html', result=result, category=category)  # Display result page
     else:
-        return "Error: Unsupported file type or empty document.", 400
+        return render_template('error.html', error_message="Error: Unsupported file type or empty document."), 400  # Use an error page instead
 
 # Run the Flask app
 if __name__ == '__main__':
