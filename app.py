@@ -47,24 +47,31 @@ def query(prompt, system_prompt="You are a helpful medical assistant.", retries=
 
     while attempt < retries:
         try:
-            response = requests.post("https://api.together.xyz/v1/chat/completions", headers=headers, data=json.dumps(payload))
+            response = requests.post(
+                "https://api.together.xyz/v1/chat/completions",
+                headers=headers,
+                data=json.dumps(payload),
+                timeout=30  # <-- Important: Add timeout
+            )
             response.raise_for_status()
             result = response.json()
 
             if 'choices' not in result or not result['choices']:
-                return f"❌ Error: Invalid API response format: {result}"
+                return "❌ Error: Invalid API response format."
 
             return result['choices'][0]['message']['content'].strip()
 
         except requests.exceptions.RequestException as e:
+            print(f"⚠️ API request error: {e}")
+            # Handle rate limiting with retry
             if isinstance(e, requests.exceptions.HTTPError) and response.status_code == 429:
                 time.sleep(wait_time)
                 wait_time *= 2
             else:
-                return f"❌ Error: {str(e)}"
-            attempt += 1
+                break  # Don't retry for other errors
+        attempt += 1
 
-    return "❌ Error: Failed after multiple retries."
+    return "❌ Error: Failed after multiple retries or network error."
 
 def read_txt(file):
     return file.read().decode('utf-8')
